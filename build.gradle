@@ -2,6 +2,8 @@ plugins {
 	id 'org.springframework.boot' version '2.7.4'
 	id 'io.spring.dependency-management' version '1.0.14.RELEASE'
 	id 'java'
+	// https://github.com/GoogleContainerTools/jib/tree/master/jib-gradle-plugin
+	id 'com.google.cloud.tools.jib' version '3.1.4'
 }
 
 group = 'io.study'
@@ -25,4 +27,36 @@ tasks.named('test') {
 
 tasks.withType(JavaCompile){
 	options.encoding = 'UTF-8'
+}
+
+jib{
+	from{
+		image = 'adoptopenjdk/openjdk11:alpine-jre'
+	}
+	to{
+		image = 'soongoood/java-docker-jib-example' // docker repository 적기 (이미지를 push 하기 위한 docker 리포지터리.. 나중에 ECR을 사용하긴 함)
+		tags = ['1.0']
+	}
+	container{
+		entrypoint = ['java', '-Dspring.profiles.active=test', '-jar', 'java-docker-lib-example-0.0.1-SNAPSHOT.jar']
+//		jvmFlags = ["-Xms128m", "-Xmx128m"]
+		jvmFlags = ['-Xms512m', '-Xmx512m', '-Xdebug',
+					'XshowSettings:vm',
+					'-XX:+UnlockExperimentalVMOptions',
+					'-XX:+UseContainerSupport'
+		]
+		ports = ['8080']
+		environment = [SPRING_OUTPUT_ANSI_ENABLED: "ALWAYS"]
+		labels = [version:project.version, name:project.name, group:project.group]
+		creationTime = 'USE_CURRENT_TIMESTAMP'
+		format = 'Docker'
+	}
+
+	extraDirectories{
+		paths{
+			path{
+				from = file('build/libs')
+			}
+		}
+	}
 }
