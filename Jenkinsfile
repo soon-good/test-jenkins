@@ -18,6 +18,13 @@ pipeline {
                 checkout scm
             }
         }
+        stage('chmod +x gradlew'){
+            steps{
+                sh """
+                chmod +x gradlew
+                """
+            }
+        }
         stage('Build Codes by Gradle') {
             steps {
                 sh """
