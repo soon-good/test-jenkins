@@ -51,7 +51,11 @@ pipeline {
         }
         stage('Deploy to AWS EC2 VM'){
             steps{
+            // 컨테이너를 종료시키면 자동으로 삭제되게끔 지정해줬다. (--rm 옵션)
+            // 컨테이너 구동 전 이전에 실행된 이미지를 종료시킨다.
+            // 이미지 명은 test-jenkins 로 지정해줬다. (--name 옵션)
             // 태그 명은 ${ecrUrl}/${repository}:${currentBuild.number} 로 지정해줬다.
+            // 주의할 것은 --name 옵션은 -t 옵션 전에 설정해줘야 무시되지 않는다는 점이다.
                 sshagent(credentials : ["deploy-soon.good-docker-msa-study"]) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ubuntu@${deployHost} \
