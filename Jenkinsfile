@@ -35,7 +35,7 @@ pipeline {
         }
         stage('Build Docker Image by Jib & Push to AWS ECR Repository') {
             steps {
-                withAWS(region:"${region}", credentials:"aws-key") {
+                withAWS(region:"${region}", credentials:"ec2-temp-study-docker-kube") {
                     ecrLogin()
                     // currentBuild.number : 현재 젠킨스 빌드 번호
                     // -Djib.console : jib 관련 실행 기록들을 콘솔에 출력하기 위한 옵션
