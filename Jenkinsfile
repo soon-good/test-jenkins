@@ -53,9 +53,12 @@ pipeline {
             steps{
             // 태그 명은 ${ecrUrl}/${repository}:${currentBuild.number} 로 지정해줬다.
                 sshagent(credentials : ["deploy-soon.good-docker-msa-study"]) {
-                    sh "ssh -o StrictHostKeyChecking=no ubuntu@${deployHost} \
-                     'aws ecr get-login-password --region ${region} | sudo docker login --username AWS --password-stdin ${ecrUrl}/${repository}; \
-                      sudo docker container run --rm -d -p 8080:8080 -t ${ecrUrl}/${repository}:${currentBuild.number} --name test-was1-${ecrUrl}/${repository}:${currentBuild.number} -u root;'"
+                    sh """
+                        sudo docker container stop test-jenkins
+                        ssh -o StrictHostKeyChecking=no ubuntu@${deployHost} \
+                            'aws ecr get-login-password --region ${region} | sudo docker login --username AWS --password-stdin ${ecrUrl}/${repository}; \
+                            sudo docker container run --rm -d -p 8080:8080 --name test-jenkins -t ${ecrUrl}/${repository}:${currentBuild.number} -u root;'
+                    """
                 }
             }
         }
