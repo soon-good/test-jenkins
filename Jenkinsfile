@@ -54,7 +54,6 @@ pipeline {
             // 태그 명은 ${ecrUrl}/${repository}:${currentBuild.number} 로 지정해줬다.
                 sshagent(credentials : ["deploy-soon.good-docker-msa-study"]) {
                     sh """
-                        sudo docker container stop test-jenkins
                         ssh -o StrictHostKeyChecking=no ubuntu@${deployHost} \
                             'sudo docker container stop test-jenkins; \
                             aws ecr get-login-password --region ${region} | sudo docker login --username AWS --password-stdin ${ecrUrl}/${repository}; \
