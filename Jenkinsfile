@@ -55,7 +55,7 @@ pipeline {
                 sshagent(credentials : ["deploy-soon.good-docker-msa-study"]) {
                     sh "ssh -o StrictHostKeyChecking=no ubuntu@${deployHost} \
                      'aws ecr get-login-password --region ${region} | sudo docker login --username AWS --password-stdin ${ecrUrl}/${repository}; \
-                      sudo docker container run --rm -d -p 80:8080 -t ${ecrUrl}/${repository}:${currentBuild.number} --name test-was1-${ecrUrl}/${repository}:${currentBuild.number} -u root;'"
+                      sudo docker container run --rm -d -p 8080:8080 -t ${ecrUrl}/${repository}:${currentBuild.number} --name test-was1-${ecrUrl}/${repository}:${currentBuild.number} -u root;'"
                 }
             }
         }
