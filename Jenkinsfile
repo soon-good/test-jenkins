@@ -56,7 +56,8 @@ pipeline {
                     sh """
                         sudo docker container stop test-jenkins
                         ssh -o StrictHostKeyChecking=no ubuntu@${deployHost} \
-                            'aws ecr get-login-password --region ${region} | sudo docker login --username AWS --password-stdin ${ecrUrl}/${repository}; \
+                            'sudo docker container stop test-jenkins; \
+                            aws ecr get-login-password --region ${region} | sudo docker login --username AWS --password-stdin ${ecrUrl}/${repository}; \
                             sudo docker container run --rm -d -p 8080:8080 --name test-jenkins -t ${ecrUrl}/${repository}:${currentBuild.number} -u root;'
                     """
                 }
